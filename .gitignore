@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # dependencies
 node_modules/
 
@@ -31,3 +32,6 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+=======
+.env
+>>>>>>> 3347fe4f7d6ff7c3a3a0a9fa3c685e588ebc4014

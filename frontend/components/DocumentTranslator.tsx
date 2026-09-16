@@ -16,6 +16,7 @@ import {
   FileDown,
 } from 'lucide-react';
 import { LANGUAGES } from '@/lib/languages';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 interface DocumentTranslatorProps {
   apiKey?: string;
@@ -46,13 +47,13 @@ export function DocumentTranslator({ apiKey, defaultTargetLang }: DocumentTransl
       formData.append('file', file);
       formData.append('targetLanguage', targetLang);
 
-      const res = await fetch('/api/translate/document', {
+      const res = await fetch(`${API_BASE_URL}/api/translate/document`, {
         method: 'POST',
         body: formData,
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Document parsing failed');
+      if (!res.ok) throw new Error(data.detail || data.error || 'Document parsing failed');
 
       setInputText(data.extractedText);
       // Auto trigger translation for parsed document
@@ -72,7 +73,7 @@ export function DocumentTranslator({ apiKey, defaultTargetLang }: DocumentTransl
     setProgress({ current: 0, total: 100 });
 
     try {
-      const res = await fetch('/api/translate/stream', {
+      const res = await fetch(`${API_BASE_URL}/api/translate/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

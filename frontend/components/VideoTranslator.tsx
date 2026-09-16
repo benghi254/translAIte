@@ -20,6 +20,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { LANGUAGES } from '@/lib/languages';
+import { API_BASE_URL } from '@/lib/apiConfig';
 import { speakText, stopSpeaking } from '@/lib/tts';
 
 interface VideoTranslatorProps {
@@ -96,13 +97,13 @@ export function VideoTranslator({ apiKey, defaultTargetLang }: VideoTranslatorPr
       formData.append('targetLanguage', targetLang);
       if (apiKey) formData.append('apiKey', apiKey);
 
-      const res = await fetch('/api/translate/media', {
+      const res = await fetch(`${API_BASE_URL}/api/translate/media`, {
         method: 'POST',
         body: formData,
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Video translation failed');
+      if (!res.ok) throw new Error(data.detail || data.error || 'Video translation failed');
 
       setTranscript(data.transcript);
       setTranslation(data.translation);
