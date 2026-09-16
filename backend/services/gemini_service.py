@@ -12,6 +12,36 @@ def get_client(custom_api_key: Optional[str] = None) -> genai.Client:
     return genai.Client(api_key=api_key)
 
 
+async def extract_text_from_image(
+    image_bytes: bytes,
+    mime_type: str = "image/webp",
+    custom_api_key: Optional[str] = None
+) -> str:
+    """
+    Extracts all text from image files (WEBP, PNG, JPG, JPEG, GIF, BMP, TIFF, SVG, etc.)
+    using Gemini 1.5 Flash Vision OCR.
+    """
+    client = get_client(custom_api_key)
+
+    image_part = types.Part.from_bytes(
+        data=image_bytes,
+        mime_type=mime_type,
+    )
+
+    prompt = (
+        "Perform OCR on this image. Extract all text, signs, labels, captions, table contents, "
+        "or readable writing present in the image verbatim. "
+        "Return ONLY the extracted text with no introductory or concluding remarks."
+    )
+
+    response = client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents=[image_part, prompt]
+    )
+
+    return response.text.strip() if response.text else ""
+
+
 async def stream_translation(
     text: str,
     target_language: str,

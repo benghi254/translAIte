@@ -46,6 +46,7 @@ export function DocumentTranslator({ apiKey, defaultTargetLang }: DocumentTransl
       const formData = new FormData();
       formData.append('file', file);
       formData.append('targetLanguage', targetLang);
+      if (apiKey) formData.append('apiKey', apiKey);
 
       const res = await fetch(`${API_BASE_URL}/api/translate/document`, {
         method: 'POST',
@@ -168,7 +169,7 @@ export function DocumentTranslator({ apiKey, defaultTargetLang }: DocumentTransl
             type="file"
             ref={fileInputRef}
             onChange={handleFileUpload}
-            accept=".pdf,.docx,.txt,.md,.json,.csv,.po"
+            accept="image/*,.webp,.png,.jpg,.jpeg,.gif,.bmp,.tiff,.pdf,.docx,.txt,.md,.json,.csv,.po"
             className="hidden"
           />
           <button
@@ -181,10 +182,10 @@ export function DocumentTranslator({ apiKey, defaultTargetLang }: DocumentTransl
             ) : (
               <Upload className="w-4 h-4" />
             )}
-            <span>{isUploading ? 'Extracting File...' : 'Upload Document'}</span>
+            <span>{isUploading ? 'Extracting File...' : 'Upload File / Image'}</span>
           </button>
           <span className="text-xs text-slate-400 hidden lg:inline">
-            Supports PDF, DOCX, TXT, MD, JSON, CSV
+            Supports WEBP, PNG, JPG, PDF, DOCX, TXT, MD, JSON & all file types
           </span>
         </div>
 

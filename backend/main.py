@@ -1,7 +1,12 @@
 import json
 import os
 from typing import Optional
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException, BackgroundTasks
+
+# Automatically load environment variables from .env / .env.local
+load_dotenv()
+load_dotenv('.env.local')
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
@@ -37,17 +42,18 @@ def health_check():
 @app.post("/api/translate/document")
 async def translate_document(
     file: UploadFile = File(...),
-    targetLanguage: str = Form("English")
+    targetLanguage: str = Form("English"),
+    apiKey: Optional[str] = Form(None)
 ):
     """
-    Parses document file (PDF, DOCX, TXT, MD, CSV, JSON) and extracts readable text chunks rapidly.
+    Parses any document, image (.webp, .png, .jpg), or file uploaded by user and extracts readable text.
     """
     try:
         content = await file.read()
-        extracted_text = extract_text_from_file(content, file.filename or "file.txt")
+        extracted_text = await extract_text_from_file(content, file.filename or "file.webp", apiKey)
         
         if not extracted_text or not extracted_text.strip():
-            raise HTTPException(status_code=400, detail="Could not extract readable text from document.")
+            raise HTTPException(status_code=400, detail="Could not extract readable text from uploaded file.")
             
         chunks = chunk_text(extracted_text)
         
